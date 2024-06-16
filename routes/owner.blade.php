@@ -27,7 +27,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('owner.dashboard');
-})->middleware(['auth:owner'])->name('dashboard');
+})->middleware(['auth:owners'])->name('dashboard');
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])

@@ -12,14 +12,20 @@
 
         <!-- Scripts -->
         {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-        
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         <script src="{{asset('js/app.js')}}" defer></script>
 
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
+            
+            @if(auth("admin")->user())
+               @include('layouts.admin-navigation')
+            @elseif(auth("owners")->user())
+               @include('layouts.owner-navigation')
+            @elseif(auth("users")->user())
+               @include('layouts.user-navigation')
+            @endif
 
             <!-- Page Heading -->
             <header class="bg-white shadow">
