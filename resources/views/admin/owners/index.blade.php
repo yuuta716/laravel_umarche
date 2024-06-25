@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
+                <div class="md:p-6 bg-white border-b border-gray-200">
                     {{-- エロクワント
                     @foreach ($e_all as $e_owner)
                     {{ $e_owner->name }}
@@ -21,7 +21,7 @@
                     {{ Carbon\Carbon::parse($q_owner->created_at)->diffForHumans() }}
                     @endforeach --}}
                     <section class="text-gray-600 body-font">
-                        <div class="container px-5 py-24 mx-auto">
+                        <div class="container md:md:px-5 py-24 mx-auto">
                           <x-flash-message status="session('status')"/>
                           <div class="flex justify-end mb-4">
                             <button onclick="location.href='{{route('admin.owners.create')}}'" class=" text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">新規作成</button>
@@ -40,16 +40,16 @@
                               <tbody>
                                 @foreach ($owners as $owner)
                                         <tr>
-                                            <td class="px-4 py-3"> {{ $owner->name }}</td>
-                                            <td class="px-4 py-3">{{ $owner->email }}</td>
-                                            <td class="px-4 py-3">{{ $owner->created_at->diffForHumans() }}</td>
-                                            <td class="px-4 py-3">
+                                            <td class="md:px-4 py-3"> {{ $owner->name }}</td>
+                                            <td class="md:px-4 py-3">{{ $owner->email }}</td>
+                                            <td class="md:px-4 py-3">{{ $owner->created_at->diffForHumans() }}</td>
+                                            <td class="md:px-4 py-3">
                                                 <button onclick="location.href='{{route('admin.owners.edit',['owner'=>$owner->id])}}'" class="mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded">編集する</button>
                                             </td>
                                         <form id="delete_{{$owner->id}}" method="post" action="{{ route('admin.owners.destroy',["owner"=>$owner->id])}}">
                                             @csrf
                                             @method("delete")
-                                            <td class="px-4 py-3">
+                                            <td class="md:px-4 py-3">
                                                 <a href="#" data-id="{{ $owner->id }}" onclick="deletePost(this)"
                                                 class=" mx-auto text-white bg-red-500 border-0 py-2 px-8 focus:outline-none hover:bg-red600 rounded " style="background: red">削除する</a>
                                             </td>
