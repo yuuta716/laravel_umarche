@@ -18,7 +18,7 @@ class shopseeder extends Seeder
         DB::table("shops")->insert([
             [
                 "owner_id"=>1,
-                "name" => "ここに店名は入ります",
+                "name" => "ここに店名が入ります",
                 "information" => "ここに店の情報が入ります",
                 "filename" =>"",
                 "is_selling" => true,
@@ -26,12 +26,11 @@ class shopseeder extends Seeder
 
             [
                 "owner_id"=>2,
-                "name" => "ここに店名は入ります",
+                "name" => "ここに店名が入ります",
                 "information" => "ここに店の情報が入ります",
                 "filename" =>"",
                 "is_selling" => true,
             ],
-
         ]);
 
     }
