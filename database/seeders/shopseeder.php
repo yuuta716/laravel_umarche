@@ -31,6 +31,38 @@ class shopseeder extends Seeder
                 "filename" =>"",
                 "is_selling" => true,
             ],
+
+            [
+                "owner_id"=>3,
+                "name" => "ここに店名が入ります",
+                "information" => "ここに店の情報が入ります",
+                "filename" =>"",
+                "is_selling" => true,
+            ],
+
+            [
+                "owner_id"=>4,
+                "name" => "ここに店名が入ります",
+                "information" => "ここに店の情報が入ります",
+                "filename" =>"",
+                "is_selling" => true,
+            ],
+
+            [
+                "owner_id"=>5,
+                "name" => "ここに店名が入ります",
+                "information" => "ここに店の情報が入ります",
+                "filename" =>"",
+                "is_selling" => true,
+            ],
+
+            [
+                "owner_id"=>6,
+                "name" => "ここに店名が入ります",
+                "information" => "ここに店の情報が入ります",
+                "filename" =>"",
+                "is_selling" => true,
+            ],
         ]);
 
     }
