@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\shop;
 use Illuminate\Support\Facades\Storage;
+use InterventionImage;
+use App\Http\Requests\UploadImageRequest;
 
 class ShopController extends Controller
 {
@@ -33,6 +35,7 @@ class ShopController extends Controller
     {
         $shops = shop::where("owner_id", Auth::id())->get();
         return view("owner.shops.index", compact("shops"));
+        // phpinfo();
     }
 
     public function edit($id)
@@ -42,11 +45,18 @@ class ShopController extends Controller
         return view("owner.shops.edit", compact("shop"));
     }
 
-    public function update(Request $request)
+    public function update(UploadImageRequest $request)
     {
         $imageFile = $request->image; //imgを受け取り変数へ
         if (!is_null($imageFile) && $imageFile->isValid()) { //nullではないかアップロードできてるか確認
-            Storage::putFile("public/shops", $imageFile); //保存先と保存したいファイル
+            // Storage::putFile("public/shops", $imageFile); //保存先と保存したいファイル
+            $fileName = uniqid(rand()."_");//ランダムなファイルを作成
+            $extension = $imageFile->extension();//extensionで受け取った画像の拡張⼦をつけて代⼊
+            $fileNameToStore = $fileName. "." .$extension;
+            $resizedImage = InterventionImage::make($imageFile)->resize(1920,1080)->encode();//resizeでサイズ設定,encodeで画像として扱える
+            Storage::put("public/shops/" .$fileNameToStore,$resizedImage);//ファイルからのファイル
+            // 名,リサイズした画像
+
         }
         return redirect()->route("owner.shops.index");
     }
