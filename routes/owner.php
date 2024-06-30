@@ -10,6 +10,7 @@ use App\Http\Controllers\Owner\Auth\RegisteredUserController;
 use App\Http\Controllers\Owner\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Owner\ShopController;
+use App\Http\Controllers\Owner\ImageController; //ImageControllerの読み込みを次にする
 
 /*
 |--------------------------------------------------------------------------
@@ -39,8 +40,10 @@ Route::get("edit/{shop}",
 Route::post("update/{shop}",
 [shopController::class,"update"])
 ->name("shops.update");
-
 });
+
+Route::resource('images',ImageController::class)
+->middleware("auth:owners")->except(["show"]); //ownerからのみアクセス可能かつ
 
 Route::get('/dashboard', function () {
     return view('owner.dashboard');
@@ -70,7 +73,7 @@ Route::middleware('guest')->group(function () {
         ->name('password.update');
 });
 
-Route::middleware('auth:owner')->group(function () {
+Route::middleware('auth:owners')->group(function () {
     Route::get('verify-email', [EmailVerificationPromptController::class, '__invoke'])
         ->name('verification.notice');
 
