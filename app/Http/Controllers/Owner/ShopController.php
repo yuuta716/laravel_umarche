@@ -47,8 +47,14 @@ class ShopController extends Controller
         return view("owner.shops.edit", compact("shop"));
     }
 
-    public function update(UploadImageRequest $request)
+    public function update(UploadImageRequest $request, $id)
     {
+        $request->validate([
+            'name' => ['required', 'string', 'max:50'],
+            'information' => ['required', 'string','max:1000'],
+            'is_selling' => ['required'],
+        ]);
+
         $imageFile = $request->image; //imgを受け取り変数へ
         if (!is_null($imageFile) && $imageFile->isValid()) {
             $fileNameToStore = ImageService::upload($imageFile,"shops");
@@ -62,6 +68,25 @@ class ShopController extends Controller
             // // 名,リサイズした画像
 
         }
-        return redirect()->route("owner.shops.index");
+        $shop = Shop::findOrFail($id);
+
+        $shop->name = $request->name;
+
+        $shop->information = $request->information;
+
+        $shop->is_selling = $request->is_selling;
+
+        if (!is_null($imageFile) && $imageFile->isValid()) {
+          $shop->filename = $fileNameToStore;
+        }
+
+        $shop->save();
+
+        return redirect()
+        ->route("owner.shops.index")
+        ->with([
+           "message" => "店舗情報を追加しました",
+           "status" => "info"
+        ]);
     }
 }

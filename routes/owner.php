@@ -36,7 +36,7 @@ Route::get("edit/{shop}",
 [shopController::class,"edit"])
 ->name("shops.edit");
 
-Route::post("update.shop",
+Route::post("update/{shop}",
 [shopController::class,"update"])
 ->name("shops.update");
 
