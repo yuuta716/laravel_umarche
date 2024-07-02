@@ -784,6 +784,9 @@ select {
 .flex {
   display: flex;
 }
+.flex-wrap {
+    flex-wrap: wrap;
+}
 .inline-flex {
   display: inline-flex;
 }
