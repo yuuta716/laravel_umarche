@@ -16,6 +16,6 @@ $pathという変数に置き換えているのでassetのstorage/productsを$pa
     @if (empty($filename))
         <img src="{{ asset('images/noimage.jpg') }}" class="w-full">
     @else
-        <img src="{{ asset('$path' . $filename) }}">
+        <img src="{{ asset($path . $filename) }}">
     @endif
 </div>
