@@ -1048,6 +1048,10 @@ select {
     padding-left: 2rem/* 32px */;
     padding-right: 2rem/* 32px */;
 }
+.px-12 {
+    padding-left: 3rem /* 48px */;
+    padding-right: 3rem /* 48px */;
+}
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
