@@ -142,20 +142,26 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
-        //
+        $product = Product::findOrFail($id);//パラメーターでidが⼊ってくるのでfindOrFail($id)で指定すれば⼀つの
+        // 商品を選ぶことができます
+        $quantity = Stock::where("product_id",$product->id)
+        ->sum("quantity");//⼀つの商品の在庫⼀つの商品の在庫情報を取るために
+        // whereで条件指定 → "owner_id",Auth::id()オーナーでログインしたID
+        $shops = Shop::where("owner_id",Auth::id())
+        ->select("id","name")
+        ->get();
+        $images = Image::where("owner_id",Auth::id())
+        ->select("id","title","filename")
+        ->orderBy("updated_at","desc")
+        ->get();
+        // リレーションで取得する際n+1問題が起こるのでwithで！
+        $categories = PrimaryCategory::with("secondary")
+        ->get();
+        return view("owner.products.edit",compact("product","quantity","shops","images","categories"));
+
     }
 
     /**

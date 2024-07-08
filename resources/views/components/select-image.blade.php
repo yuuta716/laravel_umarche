@@ -19,6 +19,8 @@
         //$name==="image1"でnameがimage4の時
         $modal = 'modal-5'; //modal-5とはidのことです
     }
+    $cImage = $currentImage ?? '';
+    $cId = $currentId ?? '';
     //id="modal-1"をid="{{ $modal }}"にすればifで作った変数名で置き換えれる
 @endphp
 <div class="modal micromodal-slide" id="{{ $modal }}" aria-hidden="true">
@@ -55,8 +57,8 @@
 <div class="flex justify-around items-center mb-4">{{-- ボタンと画像を中央揃え --}}
     <a class="py-2 px-4 bg-gray-200" data-micromodal-trigger="{{ $modal }}" href='javascript:;'>ファイルを選択</a>
     <div class="w-1/4">
-        <img id="{{ $name }}_thumbnail" src="">{{-- id="{{ $name }}がimage1や2が⼊ってくる場所です --}}
+        <img id="{{ $name }}_thumbnail" @if($cImage) src="{{asset('storage/products/' . $cImage)}}" @else src="" @endif src="">{{-- id="{{ $name }}がimage1や2が⼊ってくる場所です --}}
     </div>
 </div>
-<input id="{{ $name }}_hidden" type="hidden" name="{{ $name }}" value="">
+<input id="{{ $name }}_hidden" type="hidden" name="{{ $name }}" value=""{{$cId}}">
 {{-- これをJSで！ --}}
