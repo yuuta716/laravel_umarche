@@ -193,13 +193,11 @@ class ProductController extends Controller
                     $product->is_selling = $request->is_selling;
                     $product->save();
                     //追加の時
-                    if ($request->type === \Constant::PRODUCT_LIST["add"]
-                    ) {
+                    if ($request->type === \Constant::PRODUCT_LIST['add']) {
                         $newQuantity = $request->quantity;
                     }
                     //削減の時* -1を⼊れることでマイナスの値を⼊れることが可能
-                    if ($request->type === \Constant::PRODUCT_LIST["reduce"]
-                    ) {
+                    if ($request->type === \Constant::PRODUCT_LIST['reduce']) {
                         $newQuantity = $request->quantity * -1;
                     }
                     Stock::create([
@@ -230,6 +228,12 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Product::findOrFail($id)->delete(); //idで引っ掛かったものを削除
+        return redirect()
+            ->route('owner.products.index')
+            ->with([
+                'message' => '商品を削除しました',
+                'status' => 'alert',
+            ]);
     }
 }
