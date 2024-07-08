@@ -8,8 +8,10 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                    <x-flash-message status="session('status')" />
                     <form method="post" action="{{ route('owner.products.update', ['product' => $product->id]) }}">
                         @csrf
+                        @method("put")
                         <div class="-m-2">
                             <div class="p-2 w-1/2 mx-auto">
                                 <div class="relative">
@@ -43,19 +45,17 @@
                                 <div class="relative">
                                     <label for="sort_order" class="leading-7 text-sm text-gray-600">表⽰順</label>
                                     <input type="number" id="sort_order" name="sort_order"
-                                        value="{{ old('sort_order') }}"
+                                        value="{{ $product->sort_order }}"
                                         class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500
                                 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
                                 </div>
                             </div>
                             <div class="p-2 w-1/2 mx-auto">
-                                <div class="relative flex justify-around">
-                                    <div>
-                                        <input type="radio" name="type" value="1" class="mr-2"checked>追加
-                                    </div>
-                                    <div>
-                                        <input type="radio" name="type" value="2" class="mr-2">削減
-                                    </div>
+                                <div class="relative">
+                                    <label for="current_quantity" class="leading-7 text-sm text-gray-600">現在の在庫</label>
+                                    <input type="hidden" id="current_quantity" name="current_quantity"
+                                        value="{{ $quantity }}">
+                                    <div class="w-full bg-gray-100 bg-opacity-50 rounded text-base outline-none text-gray-700 py-1 px-3 leading-8"> {{ $quantity }} </div>
                                 </div>
                             </div>
                             <div class="p-2 w-1/2 mx-auto">
@@ -69,11 +69,13 @@
                                 </div>
                             </div>
                             <div class="p-2 w-1/2 mx-auto">
-                                <div class="relative">
-                                    <label for="current_quantity" class="leading-7 text-sm text-gray-600">現在の在庫</label>
-                                    <input type="hidden" id="current_quantity" name="current_quantity"
-                                        value="{{ $quantity }}">
-                                    <div class="w-full bg-gray-100 bg-opacity-50 rounded text-base outline-none text-gray-700 py-1 px-3 leading-8"> {{ $quantity }} </div>
+                                <div class="relative flex justify-around">
+                                    <div>
+                                        <input type="radio" name="type" value="1" class="mr-2"checked>追加
+                                    </div>
+                                    <div>
+                                        <input type="radio" name="type" value="2" class="mr-2">削減
+                                    </div>
                                 </div>
                             </div>
                             <div class="p-2 w-1/2 mx-auto">
@@ -101,7 +103,8 @@
                                             <optgroup label="{{ $category->name }}">
                                                 {{-- プライマリーカテゴリーからセカンダリーカテゴリーにすることで表⽰させれる --}}
                                                 @foreach ($category->secondary as $secondary)
-                                                    <option value="{{ $secondary->id }}">{{ $secondary->name } @if($secondary->id === $product->secondary_category_id) selected @endif}
+                                                    <option value="{{ $secondary->id }}">
+                                                        {{ $secondary->name }} @if($secondary->id === $product->secondary_category_id) selected @endif
                                                     </option>
                                                 @endforeach
                                             </optgroup>
@@ -110,19 +113,19 @@
                                 </div>
                             </div>
                         </div>
-                        <x-select-image :images="$images" curentId="{{$product->image1}}" currentImage="{{$product->imageFirst->filename ?? ''}}" name="image1" />
-                        <x-select-image :images="$images" curentId="{{$product->image2}}" currentImage="{{$product->imageSecond->filename ?? ''}}" name="image2" />
-                        <x-select-image :images="$images" curentId="{{$product->image3}}" currentImage="{{$product->imageThird->filename ?? ''}}" name="image3" />
-                        <x-select-image :images="$images" curentId="{{$product->image4}}" currentImage="{{$product->imageFourth->filename ?? ''}}" name="image4" />
+                        <x-select-image :images="$images" currentId="{{$product->image1}}" currentImage="{{$product->imageFirst->filename ?? ''}}" name="image1" />
+                        <x-select-image :images="$images" currentId="{{$product->image2}}" currentImage="{{$product->imageSecond->filename ?? ''}}" name="image2" />
+                        <x-select-image :images="$images" currentId="{{$product->image3}}" currentImage="{{$product->imageThird->filename ?? ''}}" name="image3" />
+                        <x-select-image :images="$images" currentId="{{$product->image4}}" currentImage="{{$product->imageFourth->filename ?? ''}}" name="image4" />
                         <x-select-image :images="$images" name="image5" />
-//                         {{-- curentId="// {{$product->image1}}"で数字が⼊り currentImage="{{$product->imageFirst->filename ?? ''}}"の⽅で⽂字
+                       {{-- curentId="// {{$product->image1}}"で数字が⼊り currentImage="{{$product->imageFirst->filename ?? ''}}"の⽅で⽂字
                         // 列が⼊りnullなら''空に--}}
 
                         <div class="p-2 w-1/2 mx-auto">
                             <div class="relative flex justify-around">
-                                <div><input type="radio" name="is_selling" value="1" class="mr-2" @if ($product->is_selling === 1) {checked} @endif>販売中
+                                <div><input type="radio" name="is_selling" value="1" class="mr-2" @if ($product->is_selling === 1) { checked } @endif>販売中
                                 </div>
-                                <div><input type="radio" name="is_selling" value="0" class="mr-2" @if ($product->is_selling === 0) {checked} @endif>停⽌中</div>
+                                <div><input type="radio" name="is_selling" value="0" class="mr-2" @if ($product->is_selling === 0) { checked } @endif>停⽌中</div>
                             </div>
                         </div>
 

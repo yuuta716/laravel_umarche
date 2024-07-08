@@ -26,7 +26,7 @@
                                             {{-- 変更前 <x-thumbnail :filename="$image->filename" type="products" /> --}}
                                             <x-thumbnail filename="{{ $product->imageFirst->filename ?? '' }}" type="products" />
                                             {{-- 変更前 <div class="text-xl"> {{ $image->title }} </div> --}}
-                                            {{-- 最初はないのでコメントに <div class="text-xl"> {{ $product->name }} </div> --}}
+                                            <div class="text-xl"> {{ $product->name }} </div>
                                         </div>
                                     </a>
                                 </div>

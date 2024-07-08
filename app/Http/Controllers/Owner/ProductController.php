@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Stock;
 use Throwable;
 use Illuminate\Support\Facades\Log;
-
+use App\Http\Requests\ProductRequest;
 
 class ProductController extends Controller
 {
@@ -82,7 +82,7 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
         $request->validate([
             'name' => ['required', 'string', 'max:50'],
@@ -97,7 +97,7 @@ class ProductController extends Controller
             'image2' => ['nullable', 'exists:images,id'],
             'image3' => ['nullable', 'exists:images,id'],
             'image4' => ['nullable', 'exists:images,id'],
-            "is_selling" => "required"
+            'is_selling' => 'required',
         ]);
         //これらを保存するための処理をしたできてるがProductとstockを同時に保存できるようにトランザクショ
         // ン処理を⾏います！
@@ -114,13 +114,13 @@ class ProductController extends Controller
                     'image2' => $request->image2,
                     'image3' => $request->image3,
                     'image4' => $request->image4,
-                    'is_selling' => $request->is_selling
+                    'is_selling' => $request->is_selling,
                 ]);
                 // $productと上で変数名で書いていたのでStockテーブルでも使っていく。
                 Stock::create([
-                    "product_id" => $product->id,
-                    "type" => 1,
-                    "quantity" => $request->quantity,
+                    'product_id' => $product->id,
+                    'type' => 1,
+                    'quantity' => $request->quantity,
                 ]);
             }, 2);
         } catch (Throwable $e) {
@@ -131,8 +131,8 @@ class ProductController extends Controller
         return redirect()
             ->route('owner.products.index')
             ->with([
-                "message" => "商品登録をしました。",
-                "status" => "info"
+                'message' => '商品登録をしました。',
+                'status' => 'info',
             ]);
     }
 
@@ -145,23 +145,15 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = Product::findOrFail($id);//パラメーターでidが⼊ってくるのでfindOrFail($id)で指定すれば⼀つの
+        $product = Product::findOrFail($id); //パラメーターでidが⼊ってくるのでfindOrFail($id)で指定すれば⼀つの
         // 商品を選ぶことができます
-        $quantity = Stock::where("product_id",$product->id)
-        ->sum("quantity");//⼀つの商品の在庫⼀つの商品の在庫情報を取るために
+        $quantity = Stock::where('product_id', $product->id)->sum('quantity'); //⼀つの商品の在庫⼀つの商品の在庫情報を取るために
         // whereで条件指定 → "owner_id",Auth::id()オーナーでログインしたID
-        $shops = Shop::where("owner_id",Auth::id())
-        ->select("id","name")
-        ->get();
-        $images = Image::where("owner_id",Auth::id())
-        ->select("id","title","filename")
-        ->orderBy("updated_at","desc")
-        ->get();
+        $shops = Shop::where('owner_id', Auth::id())->select('id', 'name')->get();
+        $images = Image::where('owner_id', Auth::id())->select('id', 'title', 'filename')->orderBy('updated_at', 'desc')->get();
         // リレーションで取得する際n+1問題が起こるのでwithで！
-        $categories = PrimaryCategory::with("secondary")
-        ->get();
-        return view("owner.products.edit",compact("product","quantity","shops","images","categories"));
-
+        $categories = PrimaryCategory::with('secondary')->get();
+        return view('owner.products.edit', compact('product', 'quantity', 'shops', 'images', 'categories'));
     }
 
     /**
@@ -171,9 +163,61 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
-        //
+        $product = Product::findOrFail($id); //1つのプロダクトを指定できます
+        $quantity = Stock::where('product_id', $product->id)->sum('quantity');
+        //$request->current_quantityでedit画⾯で表⽰してる数量と$quantityでアップデートで読み込んだ数量が
+        // 同じでなかったら
+        if ($request->current_quantity !== $quantity) {
+            $id = $request->route()->parameter('product'); //productのidを取得
+            return redirect()
+                ->route('owner.products.edit', ['product' => $id]) //['product'=> $id]にすることでルートパ
+                // ラメーターを持ったままeditに渡せる
+                ->with(['message' => '在庫数が変更されました！！再度変更お願いします', 'status' => 'alert']);
+        } else {
+            try {
+                // $product = Product::findOrFail($id)となり今回は新規ではなく元々あるものを更新するので$productとい
+                // う変数を⼊れてあげる
+                DB::transaction(function () use ($request, $product) {
+                    $product->name = $request->name;
+                    $product->information = $request->information;
+                    $product->price = $request->price;
+                    $product->sort_order = $request->sort_order;
+                    $product->shop_id = $request->shop_id;
+                    $product->secondary_category_id = $request->category;
+                    $product->image1 = $request->image1;
+                    $product->image2 = $request->image2;
+                    $product->image3 = $request->image3;
+                    $product->image4 = $request->image4;
+                    $product->is_selling = $request->is_selling;
+                    $product->save();
+                    //追加の時
+                    if ($request->type === '1') {
+                        $newQuantity = $request->quantity;
+                    }
+                    //削減の時* -1を⼊れることでマイナスの値を⼊れることが可能
+                    if ($request->type === '2') {
+                        $newQuantity = $request->quantity * -1;
+                    }
+                    Stock::create([
+                        'product_id' => $product->id,
+                        'type' => $request->type,
+                        'quantity' => $newQuantity,
+                    ]);
+                }, 2);
+            } catch (Throwable $e) {
+                Log::error($e);
+                throw $e;
+            }
+            // リダイレクション処理
+            return redirect()
+                ->route('owner.products.index')
+                ->with([
+                    'message' => '商品情報を更新しました。',
+                    'status' => 'info',
+                ]);
+        }
     }
 
     /**
