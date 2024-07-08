@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UploadImageRequest;
 use App\Services\ImageService;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Product;
 
 class ImageController extends Controller
 {
@@ -120,6 +121,37 @@ class ImageController extends Controller
         // storageフォルダーの中の選択されたIDの画像を消さないといけないので
         $image = Image::findOrFail($id);
         //ストレージフォルダのありかを⽰さないといけない
+        $imageInProducts = Product::where('image1', $image->id) //image1で$image->idを使っているか
+            ->orWhere('image2', $image->id) //orWhereでそのまま複数取得できる
+            ->orWhere('image3', $image->id)
+            ->orWhere('image4', $image->id)
+            ->get(); //最後はgetで取得する
+        // $imageInProductsの変数に値が⼊っていればの処理↓
+        if ($imageInProducts) {
+            $imageInProducts->each(function ($product) use ($image) {
+                if ($product->image1 === $image->id) {
+                    //⼀致していれば
+                    $product->image1 = null; //image1をnullにする
+                    $product->save(); //保存
+                }
+                if ($product->image2 === $image->id) {
+                    $product->image2 = null;
+                    $product->save();
+                }
+                if ($product->image3 === $image->id) {
+                    //⼀致していれば
+                    $product->image3 = null; //image1をnullにする
+                    $product->save(); //保存
+                }
+                if ($product->image4 === $image->id) {
+                    //⼀致していれば
+                    $product->image4 = null; //image1をnullにする
+                    $product->save(); //保存
+                }
+            });
+        }
+        // eachと書くことでコレクションの中⾝まで指定できる
+        // use($image)書くことで使うことができる
         $filePath = 'public/products/' . $image->filename;
         if (Storage::exists($filePath)) {
             Storage::delete($filePath);
