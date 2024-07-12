@@ -553,6 +553,9 @@ object {
   display: block; /* 1 */
   vertical-align: middle; /* 2 */
 }
+.object-cover {
+    object-fit: cover;
+  }
 
 /*
 Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
@@ -1040,6 +1043,9 @@ select {
 .h-8 {
   height: 2rem;
 }
+.h-40 {
+    height: 10rem /* 160px */;
+}
 .min-h-screen {
   min-height: 100vh;
 }
@@ -1057,6 +1063,9 @@ select {
 }
 .w-4 {
   width: 1rem;
+}
+.w-40 {
+    width: 10rem /* 160px */;
 }
 .w-48 {
   width: 12rem;
@@ -1172,6 +1181,9 @@ select {
 }
 .rounded {
   border-radius: 0.25rem;
+}
+.rounded-full {
+    border-radius: 9999px;
 }
 .rounded-lg {
   border-radius: 0.5rem;

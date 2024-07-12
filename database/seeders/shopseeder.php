@@ -20,7 +20,7 @@ class shopseeder extends Seeder
                 "owner_id"=>1,
                 "name" => "ここに店名が入ります",
                 "information" => "ここに店の情報が入ります",
-                "filename" =>"",
+                "filename" =>"sample1.jpg",
                 "is_selling" => true,
             ],
 
@@ -28,39 +28,7 @@ class shopseeder extends Seeder
                 "owner_id"=>2,
                 "name" => "ここに店名が入ります",
                 "information" => "ここに店の情報が入ります",
-                "filename" =>"",
-                "is_selling" => true,
-            ],
-
-            [
-                "owner_id"=>3,
-                "name" => "ここに店名が入ります",
-                "information" => "ここに店の情報が入ります",
-                "filename" =>"",
-                "is_selling" => true,
-            ],
-
-            [
-                "owner_id"=>4,
-                "name" => "ここに店名が入ります",
-                "information" => "ここに店の情報が入ります",
-                "filename" =>"",
-                "is_selling" => true,
-            ],
-
-            [
-                "owner_id"=>5,
-                "name" => "ここに店名が入ります",
-                "information" => "ここに店の情報が入ります",
-                "filename" =>"",
-                "is_selling" => true,
-            ],
-
-            [
-                "owner_id"=>6,
-                "name" => "ここに店名が入ります",
-                "information" => "ここに店の情報が入ります",
-                "filename" =>"",
+                "filename" =>"sample2.jpg",
                 "is_selling" => true,
             ],
         ]);
