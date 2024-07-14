@@ -40,8 +40,14 @@ class CartController extends Controller {
                 'quantity' => $request->quantity
             ] );
         }
-        return redirect()->route("user.cart.index");
+        return redirect()->route( 'user.cart.index' );
 
+    }
+
+    public function delete( $id ) {
+        Cart::where( 'product_id', $id )->where( 'user_id', Auth::id() )->delete();
+        //ログインしているユーザーidを削除
+        return redirect()->route( 'user.cart.index' );
     }
 
 }
