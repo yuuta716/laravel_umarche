@@ -59,13 +59,7 @@ class Product extends Model
 
     public function scopeAvailableItems($query)
     {
-        $stocks = DB::table('t_stocks')
-                ->select(
-                    'product_id',
-                    DB::raw('sum(quantity)as quantity')
-                )
-                ->groupBy('product_id')
-                ->having('quantity', '>', 1);
+        $stocks = DB::table('t_stocks')->select('product_id', DB::raw('sum(quantity)as quantity'))->groupBy('product_id')->having('quantity', '>', 1);
         return $query
             ->joinSub($stocks, 'stock', function ($join) {
                 $join->on('products.id', '=', 'stock.product_id');
@@ -79,5 +73,29 @@ class Product extends Model
             ->where('shops.is_selling', true)
             ->where('products.is_selling', true)
             ->select('products.id as id', 'products.name as name', 'products.price', 'products.sort_order as sort_order', 'products.information', 'secondary_categories.name as category', 'image1.filename as filename');
+    }
+
+    public function scopeSortOrder($query, $sortOrder)
+    {
+        // 特定のソート順が指定されていない場合や、推奨されるソート順が選択された場合のデフォルト動作の条件。
+        if ($sortOrder === null || $sortOrder === \Constant::SORT_ORDER['recommend']) {
+            return $query->orderBy('sort_order', 'asc');
+        }
+        // ⾼い価格から低い価格へ並び替えるための条件(desc)
+        if ($sortOrder === \Constant::SORT_ORDER['higherPrice']) {
+            return $query->orderBy('price', 'desc');
+        }
+        // 低い価格から⾼い価格へ並び替えるための条件(asc)
+        if ($sortOrder === \Constant::SORT_ORDER['lowerPrice']) {
+            return $query->orderBy('price', 'asc');
+        }
+        // 商品が追加された⽇付が新しい順に並び替えるための条件(desc)
+        if ($sortOrder === \Constant::SORT_ORDER['later']) {
+            return $query->orderBy('products.created_at', 'desc');
+        }
+        // 商品が追加された⽇付が古い順に並び替えるための条件(asc)
+        if ($sortOrder === \Constant::SORT_ORDER['older']) {
+            return $query->orderBy('products.created_at', 'asc');
+        }
     }
 }
