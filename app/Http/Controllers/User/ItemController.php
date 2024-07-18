@@ -14,6 +14,18 @@ class ItemController extends Controller
     {
         //ユーザーかどうかの確認
         $this->middleware('auth:users');
+        $this->middleware(function ($request, $next) {
+            $id = $request->route()->parameter("item"); //itemのidを取得
+           if (!is_null($id)) { //itemのidが存在するなら↓
+            $itemId = Product::availableItems()->where('products.id',$id)->exists(); //productのidが⼊ってきた値idと⼀致してるか。⼊ってきた値が存在するかどうか確認。
+           //↓itemIdが存在していなかったら
+           if (!$itemId) {
+           abort(404); //404の画⾯表⽰
+            }
+            }
+           return $next($request);
+            });
+
     }
 
     public function index()
