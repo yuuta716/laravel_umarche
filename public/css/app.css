@@ -1169,6 +1169,32 @@ select {
       align-items: center;
     }
 }
+@media (min-width: 1024px) {
+    .lg\:justify-around {
+      justify-content: space-around;
+    }
+}
+@media (min-width: 1024px) {
+    .lg\:flex {
+      display: flex;
+    }
+}
+@media (min-width: 1024px) {
+    .lg\:mb-0 {
+      margin-bottom: 0px;
+    }
+}
+@media (min-width: 1024px) {
+    .lg\:mr-2 {
+      margin-right: 0.5rem /* 8px */;
+    }
+}
+@media (min-width: 1024px) {
+    .lg\:px-8 {
+      padding-left: 2rem /* 32px */;
+      padding-right: 2rem /* 32px */;
+    }
+}
 .justify-end {
   justify-content: flex-end;
 }
