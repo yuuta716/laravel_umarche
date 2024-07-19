@@ -107,4 +107,22 @@ class Product extends Model
             return;
         }
     }
+
+    public function scopeSearchKeyword($query, $keyword)
+    {
+        if (!is_null($keyword)) {
+            //与えられたキーワードがnullでないことを確認します
+            $spaceConvert = mb_convert_kana($keyword, 's'); //キーワード内の全⾓スペースを半⾓スペースに変換にして検索キーワードの⼀貫性を保証
+            $keywords = preg_split('/[\s]+/', $spaceConvert, -1, PREG_SPLIT_NO_EMPTY); //変換されたキーワードを空⽩で区切って配列にPREG_SPLIT_NO_EMPTYフラグは、空の⽂字列を結果から除外するために使⽤されます。
+            foreach (
+                $keywords
+                as $word //単語をループで回す
+            ) {
+                $query->where('products.name', 'like', '%' . $word . '%');
+            }
+            return $query;
+        } else {
+            return;
+        }
+    }
 }
