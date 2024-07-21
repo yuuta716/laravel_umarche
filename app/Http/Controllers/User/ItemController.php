@@ -36,7 +36,7 @@ class ItemController extends Controller
     {
         // Mail::to('test@example.com') //受信者の指定
         //      ->send(new TestMail()); //Mailableクラス
-        SendThanksMail::dispatch();
+        // SendThanksMail::dispatch();
         $categories = PrimaryCategory::with("secondary")->get();
         $products = Product::availableItems()
         ->searchKeyword($request->keyword)

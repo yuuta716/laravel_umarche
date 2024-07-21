@@ -9,6 +9,8 @@ use App\Models\Stock;
 use Illuminate\Support\Facades\Auth;
 //ユーザーidを取得するために
 use App\Models\User;
+use App\Services\CartService;
+use App\Jobs\SendThanksMail;
 
 class CartController extends Controller {
 
@@ -52,6 +54,15 @@ class CartController extends Controller {
     }
 
     public function checkout() {
+
+        $items = Cart::where( 'user_id', Auth::id() )->get();
+        //カートの中でログインしているユーザーの商品情報が設定されている
+        $products = CartService::getItemsInCart( $items );
+        //
+        $user = User::findOrFail( Auth::id() );
+        SendThanksMail::dispatch( $products, $user );
+        dd( 'メール送信test' );
+        //
         $user = User::findOrFail( Auth::id() );
         //1ログインしているユーザー情報を取る
         $products = $user->products;
